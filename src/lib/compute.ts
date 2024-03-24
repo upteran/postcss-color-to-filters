@@ -1,29 +1,28 @@
-const { isHEXValid } = require('./utils/isHEXValid');
-const { isRGBValid } = require('./utils/isRGBValid');
-const { hexToRgb } = require('./utils/hexToRgb');
-const { trimRgb } = require('./utils/trimRgb');
-const { ColorController, Solver } = require('./ColorController');
+import { isHEXValid } from './utils/isHEXValid';
+import { isRGBValid } from './utils/isRGBValid';
+import { hexToRgb } from './utils/hexToRgb';
+import { trimRgb } from './utils/trimRgb';
+import { ColorController, Solver } from './ColorController';
 
 export function compute(input: string) {
-  let rgb;
+  let rgb: number[];
 
-  if (isHEXValid(input)) {
-    rgb = hexToRgb(input);
-  } else if (isRGBValid(input)) {
-    rgb = trimRgb(input);
-  } else {
-    alert('Invalid format!');
-    return;
+  switch (true) {
+    case isHEXValid(input):
+      rgb = hexToRgb(input);
+      break;
+    case isRGBValid(input):
+      rgb = trimRgb(input);
+      break;
+    default:
+      throw new Error('Invalid format!');
   }
 
   if (rgb.length !== 3) {
-    alert('Invalid format!');
-    return;
+    throw new Error('Invalid format!');
   }
 
-  const color = new ColorController(rgb[0], rgb[1], rgb[2]);
+  const color = new ColorController([rgb[0], rgb[1], rgb[2]]);
   const solver = new Solver(color);
-  const result = solver.solve();
-
-  return result;
+  return solver.solve();
 }

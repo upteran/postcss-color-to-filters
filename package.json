@@ -1,7 +1,6 @@
 {
   "name": "postcss-color-to-filters",
   "version": "0.0.0",
-  "type": "module",
   "description": "PostCSS plugin to transform hex and rgb colors to css filters",
   "keywords": [
     "postcss",
@@ -11,8 +10,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "unit": "node --test index.test.js",
-    "test": "npm run unit && eslint ."
+    "unit": "ts-node --project tsconfig.json index.test.ts",
+    "test": "pnpm unit"
   },
   "author": "upteran <upteran@gmail.com>",
   "license": "MIT",
@@ -43,6 +42,7 @@
     ]
   },
   "dependencies": {
+    "ts-node": "^10.9.2",
     "tslib": "^2.6.2"
   }
 }

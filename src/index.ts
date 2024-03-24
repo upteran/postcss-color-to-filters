@@ -1,4 +1,4 @@
-import {Declaration, Postcss, Root} from "postcss";
+import { Declaration, Root } from "postcss";
 
 import { compute } from './lib/compute';
 
@@ -41,7 +41,7 @@ type ModuleOpt = {
   pluginName?: string
 }
 
-module.exports = (opts: ModuleOpt = {}) => {
+export default (opts: ModuleOpt = {}) => {
   // Work with options here
   const pluginName = opts.pluginName || PLUGIN_NAME;
   let prepared = null;
@@ -77,4 +77,4 @@ module.exports = (opts: ModuleOpt = {}) => {
   };
 };
 
-module.exports.postcss = true;
+export const postcss = true;

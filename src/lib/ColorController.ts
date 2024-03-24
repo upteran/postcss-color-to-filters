@@ -1,35 +1,26 @@
-function rgbToHex(r, g, b) {
-  function componentToHex(c: number) {
-    const hex = c.toString();
-    return hex.length == 1 ? '0' + hex : hex;
-  }
-
-  return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+function rgbToHex(rgb: number[]): string {
+  return '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
 }
-
-
 
 export class ColorController {
   public r: number;
   public g: number;
   public b: number;
 
-  constructor(r: number, g: number, b: number) {
-    this.set(r, g, b);
+  constructor(rgb: number[]) {
+    this.set(rgb);
   }
 
-  toRgb() {
+  toRgb(): string {
     return `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
   }
 
-  toHex() {
-    return rgbToHex(Math.round(this.r), Math.round(this.g), Math.round(this.b));
+  toHex(): string {
+    return rgbToHex([Math.round(this.r), Math.round(this.g), Math.round(this.b)]);
   }
 
-  set(r, g, b) {
-    this.r = this.clamp(r);
-    this.g = this.clamp(g);
-    this.b = this.clamp(b);
+  set(rgb: number[]): void {
+    [this.r, this.g, this.b] = rgb.map((c) => this.clamp(c));
   }
 
   hueRotate(angle = 0) {
@@ -159,7 +150,7 @@ export class ColorController {
     };
   }
 
-  clamp(value: number) {
+  private clamp(value: number): number {
     if (value > 255) {
       value = 255;
     } else if (value < 0) {
@@ -169,15 +160,15 @@ export class ColorController {
   }
 }
 
-class Solver {
+export class Solver {
   target: ColorController;
   targetHSL: { h: number; s: number; l: number };
   reusedColor: ColorController;
 
-  constructor(target: ColorController, _baseColor: ColorController) {
+  constructor(target: ColorController) {
     this.target = target;
     this.targetHSL = target.hsl();
-    this.reusedColor = new ColorController(0, 0, 0);
+    this.reusedColor = new ColorController([0, 0, 0]);
   }
 
   solve(): { values: number[]; loss: number; filter: string; filterRaw: string } {
@@ -273,7 +264,7 @@ class Solver {
 
   loss(filters: number[]): number {
     const color = this.reusedColor;
-    color.set(0, 0, 0);
+    color.set([0, 0, 0]);
 
     color.invert(filters[0] / 100);
     color.sepia(filters[1] / 100);
