@@ -1,4 +1,4 @@
-function expandHex(hextexp) {
+export function expandHex(hextexp: string) {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hextexp = hextexp.replace(shorthandRegex, (m, r, g, b) => {
     return r + r + g + g + b + b;
@@ -6,12 +6,10 @@ function expandHex(hextexp) {
   return hextexp;
 }
 
-function hexToRgb(hex) {
+export function hexToRgb(hex: string) {
   const expandedHex = expandHex(hex);
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(expandedHex);
   return result
     ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
     : null;
 }
-
-module.exports = { hexToRgb };

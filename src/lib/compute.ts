@@ -4,7 +4,7 @@ const { hexToRgb } = require('./utils/hexToRgb');
 const { trimRgb } = require('./utils/trimRgb');
 const { ColorController, Solver } = require('./ColorController');
 
-function compute(input) {
+export function compute(input: string) {
   let rgb;
 
   if (isHEXValid(input)) {
@@ -27,5 +27,3 @@ function compute(input) {
 
   return result;
 }
-
-module.exports = { compute }

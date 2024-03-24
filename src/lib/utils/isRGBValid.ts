@@ -1,4 +1,4 @@
-function isRGBValid(color) {
+export function isRGBValid(color: string) {
   const RGBColorRegExp = /^(rgb\()?\d{1,3}, ?\d{1,3}, ?\d{1,3}(\))?$/i;
 
   if (!RGBColorRegExp.test(color)) return false;
@@ -19,5 +19,3 @@ function isRGBValid(color) {
     return false;
   }
 }
-
-module.exports = { isRGBValid };

@@ -1,16 +1,18 @@
-const { compute } = require('./lib/compute');
+import {Declaration, Postcss, Root} from "postcss";
 
-/**
- * @type {import('postcss').PluginCreator}
- */
+import { compute } from './lib/compute';
+
+const TRANSFORM_FN_NAME = 'color-to-filter';
+const PLUGIN_NAME = 'postcss-color-to-filters';
 
 const customPropertyPtrn = /^--[A-z][\w-]*$/;
 const hexRegex = /#[0-9a-fA-F]{6}/g;
-const transformerFnName = 'color-to-filter';
 
-const customPropsMap = new Map();
+type CustomPropsMap = Map<string, string>
 
-const getCustomPropValue = (value, prepared) => {
+const customPropsMap: CustomPropsMap = new Map();
+
+const getCustomPropValue = (value: string, prepared: CustomPropsMap) => {
   let changed = true;
 
   while (changed && value.includes('--')) {
@@ -19,16 +21,15 @@ const getCustomPropValue = (value, prepared) => {
     const newValue = prepared.get(`--${t}`);
     if (newValue !== undefined) {
       value = newValue;
-      changed = true; // Set the changed flag if a new value is found
+      changed = true;
     }
   }
 
   return value;
 };
 
-function getCustomPropertiesFromRoot(root) {
+function getCustomPropertiesFromRoot(root: Root) {
   root.walkDecls((decl) => {
-    // Custom property declaration
     if (customPropertyPtrn.test(decl.prop)) {
       customPropsMap.set(decl.prop, decl.value);
     }
@@ -36,22 +37,26 @@ function getCustomPropertiesFromRoot(root) {
   return customPropsMap;
 }
 
-module.exports = (opts = {}) => {
+type ModuleOpt = {
+  pluginName?: string
+}
+
+module.exports = (opts: ModuleOpt = {}) => {
   // Work with options here
-  const pluginName = opts.pluginName || 'postcss-color-to-filters';
+  const pluginName = opts.pluginName || PLUGIN_NAME;
   let prepared = null;
 
   return {
     postcssPlugin: pluginName,
     prepare() {
       return {
-        Once(root) {
+        Once(root: Root) {
           prepared = getCustomPropertiesFromRoot(root);
         },
       };
     },
-    Declaration(node) {
-      if (node.variable && node.value.includes(transformerFnName)) {
+    Declaration(node: Declaration) {
+      if (node.variable && node.value.includes(TRANSFORM_FN_NAME)) {
         // Extract the hex color value from the variable value
         let otherVariableDeclaration = null;
         const nodeValue = getCustomPropValue(node.value, prepared);
@@ -61,8 +66,8 @@ module.exports = (opts = {}) => {
 
         // Modify the hex color value using your logic
         if (hexColors) {
-          hexColors.forEach((hexColor) => {
-            const filterValue = compute(hexColor); // Assuming hexToFilter is defined elsewhere
+          hexColors.forEach((hexColor: string) => {
+            const filterValue = compute(hexColor);
             // Replace the hex color value with the modified filter value in the variable value
             node.value = filterValue.filterRaw;
           });

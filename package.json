@@ -3,8 +3,14 @@
   "version": "0.0.0",
   "type": "module",
   "description": "PostCSS plugin to transform hex and rgb colors to css filters",
-  "keywords": ["postcss", "css", "postcss-plugin", "postcss-color-to-filters"],
+  "keywords": [
+    "postcss",
+    "css",
+    "postcss-plugin",
+    "postcss-color-to-filters"
+  ],
   "scripts": {
+    "build": "rollup -c",
     "unit": "node --test index.test.js",
     "test": "npm run unit && eslint ."
   },
@@ -18,8 +24,11 @@
     "postcss": "^8.4.27"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
     "eslint": "^8.47.0",
-    "postcss": "^8.4.27"
+    "postcss": "^8.4.27",
+    "rollup": "^4.13.0",
+    "typescript": "^5.4.3"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -29,6 +38,11 @@
       "node": true,
       "es6": true
     },
-    "extends": ["eslint:recommended"]
+    "extends": [
+      "eslint:recommended"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.6.2"
   }
 }

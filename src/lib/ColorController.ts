@@ -1,8 +1,6 @@
-// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-
 function rgbToHex(r, g, b) {
-  function componentToHex(c) {
-    var hex = c.toString(16);
+  function componentToHex(c: number) {
+    const hex = c.toString();
     return hex.length == 1 ? '0' + hex : hex;
   }
 
@@ -11,8 +9,12 @@ function rgbToHex(r, g, b) {
 
 
 
-class ColorController {
-  constructor(r, g, b) {
+export class ColorController {
+  public r: number;
+  public g: number;
+  public b: number;
+
+  constructor(r: number, g: number, b: number) {
     this.set(r, g, b);
   }
 
@@ -157,7 +159,7 @@ class ColorController {
     };
   }
 
-  clamp(value) {
+  clamp(value: number) {
     if (value > 255) {
       value = 255;
     } else if (value < 0) {
@@ -168,13 +170,17 @@ class ColorController {
 }
 
 class Solver {
-  constructor(target, _baseColor) {
+  target: ColorController;
+  targetHSL: { h: number; s: number; l: number };
+  reusedColor: ColorController;
+
+  constructor(target: ColorController, _baseColor: ColorController) {
     this.target = target;
     this.targetHSL = target.hsl();
-    this.reusedColor = new Color(0, 0, 0);
+    this.reusedColor = new ColorController(0, 0, 0);
   }
 
-  solve() {
+  solve(): { values: number[]; loss: number; filter: string; filterRaw: string } {
     const result = this.solveNarrow(this.solveWide());
     return {
       values: result.values,
@@ -184,12 +190,12 @@ class Solver {
     };
   }
 
-  solveWide() {
+  solveWide(): { loss: number; values: number[] } {
     const A = 5;
     const c = 15;
     const a = [60, 180, 18000, 600, 1.2, 1.2];
 
-    let best = { loss: Infinity };
+    let best: { loss: number; values: number[] } = { loss: Infinity, values: [] };
     for (let i = 0; best.loss > 25 && i < 3; i++) {
       const initial = [50, 20, 3750, 50, 100, 100];
       const result = this.spsa(A, a, c, initial, 1000);
@@ -200,7 +206,7 @@ class Solver {
     return best;
   }
 
-  solveNarrow(wide) {
+  solveNarrow(wide: { loss: number; values: number[] }): { loss: number; values: number[] } {
     const A = wide.loss;
     const c = 2;
     const A1 = A + 1;
@@ -208,15 +214,15 @@ class Solver {
     return this.spsa(A, a, c, wide.values, 500);
   }
 
-  spsa(A, a, c, values, iters) {
+  spsa(A: number, a: number[], c: number, values: number[], iters: number): { loss: number; values: number[] } {
     const alpha = 1;
     const gamma = 0.16666666666666666;
 
-    let best = null;
+    let best: number[] | null = null;
     let bestLoss = Infinity;
-    const deltas = new Array(6);
-    const highArgs = new Array(6);
-    const lowArgs = new Array(6);
+    const deltas: number[] = new Array(6);
+    const highArgs: number[] = new Array(6);
+    const lowArgs: number[] = new Array(6);
 
     for (let k = 0; k < iters; k++) {
       const ck = c / Math.pow(k + 1, gamma);
@@ -230,7 +236,7 @@ class Solver {
       for (let i = 0; i < 6; i++) {
         const g = (lossDiff / (2 * ck)) * deltas[i];
         const ak = a[i] / Math.pow(A + k + 1, alpha);
-        values[i] = fix(values[i] - ak * g, i);
+        values[i] = this.fix(values[i] - ak * g, i);
       }
 
       const loss = this.loss(values);
@@ -239,33 +245,33 @@ class Solver {
         bestLoss = loss;
       }
     }
+    if (best === null) throw new Error("Best solution not found");
     return { values: best, loss: bestLoss };
-
-    function fix(value, idx) {
-      let max = 100;
-      if (idx === 2 /* saturate */) {
-        max = 7500;
-      } else if (idx === 4 /* brightness */ || idx === 5 /* contrast */) {
-        max = 200;
-      }
-
-      if (idx === 3 /* hue-rotate */) {
-        if (value > max) {
-          value %= max;
-        } else if (value < 0) {
-          value = max + (value % max);
-        }
-      } else if (value < 0) {
-        value = 0;
-      } else if (value > max) {
-        value = max;
-      }
-      return value;
-    }
   }
 
-  loss(filters) {
-    // Argument is array of percentages.
+  fix(value: number, idx: number): number {
+    let max = 100;
+    if (idx === 2 /* saturate */) {
+      max = 7500;
+    } else if (idx === 4 /* brightness */ || idx === 5 /* contrast */) {
+      max = 200;
+    }
+
+    if (idx === 3 /* hue-rotate */) {
+      if (value > max) {
+        value %= max;
+      } else if (value < 0) {
+        value = max + (value % max);
+      }
+    } else if (value < 0) {
+      value = 0;
+    } else if (value > max) {
+      value = max;
+    }
+    return value;
+  }
+
+  loss(filters: number[]): number {
     const color = this.reusedColor;
     color.set(0, 0, 0);
 
@@ -287,8 +293,8 @@ class Solver {
     );
   }
 
-  raw(filters) {
-    function fmt(idx, multiplier = 1) {
+  raw(filters: number[]): string {
+    function fmt(idx: number, multiplier: number = 1): number {
       return Math.round(filters[idx] * multiplier);
     }
     return `brightness(0) saturate(100%) invert(${fmt(0)}%) sepia(${fmt(1)}%) saturate(${fmt(
@@ -296,8 +302,8 @@ class Solver {
     )}%) hue-rotate(${fmt(3, 3.6)}deg) brightness(${fmt(4)}%) contrast(${fmt(5)}%)`;
   }
 
-  css(filters) {
-    function fmt(idx, multiplier = 1) {
+  css(filters: number[]): string {
+    function fmt(idx: number, multiplier: number = 1): number {
       return Math.round(filters[idx] * multiplier);
     }
     return `filter: brightness(0) saturate(100%) invert(${fmt(0)}%) sepia(${fmt(
@@ -308,7 +314,3 @@ class Solver {
   }
 }
 
-module.exports = {
-  ColorController,
-  Solver
-};
