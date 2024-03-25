@@ -6,7 +6,6 @@ const TRANSFORM_FN_NAME = 'color-to-filter';
 const PLUGIN_NAME = 'postcss-color-to-filters';
 
 const customPropertyPtrn = /^--[A-z][\w-]*$/;
-const hexRegex = /#[0-9a-fA-F]{6}/g;
 
 type CustomPropsMap = Map<string, string>
 
@@ -47,6 +46,10 @@ function getCustomPropertiesFromRoot(root: Root) {
 
 type ModuleOpt = {
   pluginName?: string
+  /** The acceptanceLossPercentage parameter in the ModuleOpt type represents the acceptable loss
+   * percentage for the color-to-filter transformation. This value is used to determine
+   * the tolerance range for the transformation */
+  acceptanceLossPercentage?: number
 }
 
 export default (opts: ModuleOpt = {}) => {
@@ -68,7 +71,7 @@ export default (opts: ModuleOpt = {}) => {
         const nodeValue = getCustomPropValue(node.value, prepared);
         const colorValue = getColorValueFromTransformFn(nodeValue);
         // todo: add error value handler
-        node.value = compute(colorValue).filterRaw;
+        node.value = compute(colorValue, opts.acceptanceLossPercentage).filter;
       }
     },
   };

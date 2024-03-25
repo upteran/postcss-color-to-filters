@@ -1,26 +1,18 @@
+import { hexToCSSFilter } from 'hex-to-css-filter';
 import { isHEXValid } from './utils/isHEXValid';
 import { isRGBValid } from './utils/isRGBValid';
-import { hexToRgb } from './utils/hexToRgb';
-import { trimRgb } from './utils/trimRgb';
-import { ColorController, Solver } from './color-manager';
+import { rgbToHex } from './utils/rgbToHex';
 
-export function compute(input: string) {
-  let rgb: number[];
 
+const config = {
+  maxChecks: 5,
+};
+export function compute(input: string, acceptanceLossPercentage?: number) {
   if (isHEXValid(input)) {
-    rgb = hexToRgb(input);
+    return hexToCSSFilter(input, config);
   } else if (isRGBValid(input)) {
-    rgb = trimRgb(input);
+    return hexToCSSFilter(rgbToHex(input), {...config, acceptanceLossPercentage: acceptanceLossPercentage || 1});
   } else {
-    return { filterRaw: input };
-    // new Error('Invalid format!');
+    return { filter: input };
   }
-
-  if (rgb.length !== 3) {
-    throw new Error('Invalid format!');
-  }
-
-  const color = new ColorController([rgb[0], rgb[1], rgb[2]]);
-  const solver = new Solver(color, 12345);
-  return solver.solve();
 }
