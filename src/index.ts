@@ -17,14 +17,13 @@ const getCustomPropValue = (value: string, prepared: CustomPropsMap) => {
 
   while (changed && value.includes('--')) {
     changed = false; // Reset the changed flag for each iteration
-    const t = value.split('--')[1].replace(')', '');
+    const t = value.split('--')[1].replaceAll(')', '');
     const newValue = prepared.get(`--${t}`);
     if (newValue !== undefined) {
       value = newValue;
       changed = true;
     }
   }
-
   return value;
 };
 
@@ -56,7 +55,7 @@ export default (opts: ModuleOpt = {}) => {
       };
     },
     Declaration(node: Declaration) {
-      if (node.variable && node.value.includes(TRANSFORM_FN_NAME)) {
+      if (node.value.includes(TRANSFORM_FN_NAME)) {
         // Extract the hex color value from the variable value
         let otherVariableDeclaration = null;
         const nodeValue = getCustomPropValue(node.value, prepared);
