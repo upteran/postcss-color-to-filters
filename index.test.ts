@@ -19,7 +19,7 @@ test('should return same props', async () => {
 
 test('should transform color values', async () => {
   const input = 'testClass { filter: color-to-filter(#ff0000) }'
-  const output = 'testClass { filter: brightness(0) saturate(100%) invert(30%) sepia(91%) saturate(7499%) hue-rotate(356deg) brightness(101%) contrast(120%) }'
+  const output = 'testClass { filter: brightness(0) saturate(100%) invert(16%) sepia(96%) saturate(7468%) hue-rotate(0deg) brightness(98%) contrast(103%) }'
   await run(input, output, { })
 })
 
@@ -31,12 +31,12 @@ test('should handle invalid color values', async () => {
 
 test('should handle in custom properties', async () => {
   const input = ':root { --main-color: color-to-filter(#ff0000); } testClass { filter: var(--main-color) }'
-  const output = ':root { --main-color: brightness(0) saturate(100%) invert(30%) sepia(91%) saturate(7499%) hue-rotate(356deg) brightness(101%) contrast(120%); } testClass { filter: var(--main-color) }'
+  const output = ':root { --main-color: brightness(0) saturate(100%) invert(16%) sepia(96%) saturate(7468%) hue-rotate(0deg) brightness(98%) contrast(103%); } testClass { filter: var(--main-color) }'
   await run(input, output, { })
 })
 
 test('should handle with custom properties argument', async () => {
   const input = ':root { --main-color: #ff0000; } testClass { filter: color-to-filter(var(--main-color)) }'
-  const output = ':root { --main-color: #ff0000; } testClass { filter: brightness(0) saturate(100%) invert(30%) sepia(91%) saturate(7499%) hue-rotate(356deg) brightness(101%) contrast(120%) }'
+  const output = ':root { --main-color: #ff0000; } testClass { filter: brightness(0) saturate(100%) invert(16%) sepia(96%) saturate(7468%) hue-rotate(0deg) brightness(98%) contrast(103%) }'
   await run(input, output, { })
 })

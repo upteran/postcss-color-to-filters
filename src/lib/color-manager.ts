@@ -160,15 +160,29 @@ export class ColorController {
   }
 }
 
+class SeededRandom {
+  seed = 0;
+  constructor(seed: number) {
+    this.seed = seed;
+  }
+
+  next() {
+    const x = Math.sin(this.seed++) * 10000;
+    return x - Math.floor(x);
+  }
+}
+
 export class Solver {
   target: ColorController;
   targetHSL: { h: number; s: number; l: number };
   reusedColor: ColorController;
+  random: SeededRandom;
 
-  constructor(target: ColorController) {
+  constructor(target: ColorController, seed: number) {
     this.target = target;
     this.targetHSL = target.hsl();
     this.reusedColor = new ColorController([0, 0, 0]);
+    this.random = new SeededRandom(seed);
   }
 
   solve(): { values: number[]; loss: number; filter: string; filterRaw: string } {
@@ -218,7 +232,7 @@ export class Solver {
     for (let k = 0; k < iters; k++) {
       const ck = c / Math.pow(k + 1, gamma);
       for (let i = 0; i < 6; i++) {
-        deltas[i] = Math.random() > 0.5 ? 1 : -1;
+        deltas[i] = this.random.next() > 0.5 ? 1 : -1;
         highArgs[i] = values[i] + ck * deltas[i];
         lowArgs[i] = values[i] - ck * deltas[i];
       }
