@@ -7,15 +7,13 @@ import { ColorController, Solver } from './color-manager';
 export function compute(input: string) {
   let rgb: number[];
 
-  switch (true) {
-    case isHEXValid(input):
-      rgb = hexToRgb(input);
-      break;
-    case isRGBValid(input):
-      rgb = trimRgb(input);
-      break;
-    default:
-      throw new Error('Invalid format!');
+  if (isHEXValid(input)) {
+    rgb = hexToRgb(input);
+  } else if (isRGBValid(input)) {
+    rgb = trimRgb(input);
+  } else {
+    return { filterRaw: input };
+    // new Error('Invalid format!');
   }
 
   if (rgb.length !== 3) {

@@ -27,6 +27,15 @@ const getCustomPropValue = (value: string, prepared: CustomPropsMap) => {
   return value;
 };
 
+const getColorValueFromTransformFn = (value: string) => {
+  const transformFnRegex = /color-to-filter\((.*?)\)/;
+  const match = value.match(transformFnRegex);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return value;
+}
+
 function getCustomPropertiesFromRoot(root: Root) {
   root.walkDecls((decl) => {
     if (customPropertyPtrn.test(decl.prop)) {
@@ -56,21 +65,10 @@ export default (opts: ModuleOpt = {}) => {
     },
     Declaration(node: Declaration) {
       if (node.value.includes(TRANSFORM_FN_NAME)) {
-        // Extract the hex color value from the variable value
-        let otherVariableDeclaration = null;
         const nodeValue = getCustomPropValue(node.value, prepared);
-        const hexColorsMatch = nodeValue.match(hexRegex);
-
-        const hexColors = hexColorsMatch || otherVariableDeclaration || null;
-
-        // Modify the hex color value using your logic
-        if (hexColors) {
-          hexColors.forEach((hexColor: string) => {
-            const filterValue = compute(hexColor);
-            // Replace the hex color value with the modified filter value in the variable value
-            node.value = filterValue.filterRaw;
-          });
-        }
+        const colorValue = getColorValueFromTransformFn(nodeValue);
+        // todo: add error value handler
+        node.value = compute(colorValue).filterRaw;
       }
     },
   };

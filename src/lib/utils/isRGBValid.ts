@@ -12,9 +12,5 @@ export function isRGBValid(color: string) {
     .replace(/^rgb\(|\)| /, '')
     .split(',')
     .map((x) => parseInt(x));
-  if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
-    return true;
-  } else {
-    return false;
-  }
+  return r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255;
 }
