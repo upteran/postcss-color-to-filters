@@ -1,22 +1,22 @@
 import { Declaration, Root } from "postcss";
 
-import { compute } from './lib/compute';
+import { compute } from "./lib/compute";
 
-const TRANSFORM_FN_NAME = 'color-to-filter';
-const PLUGIN_NAME = 'postcss-color-to-filters';
+const TRANSFORM_FN_NAME = "color-to-filter";
+const PLUGIN_NAME = "postcss-color-to-filters";
 
 const customPropertyPtrn = /^--[A-z][\w-]*$/;
 
-type CustomPropsMap = Map<string, string>
+type CustomPropsMap = Map<string, string>;
 
 const customPropsMap: CustomPropsMap = new Map();
 
 const getCustomPropValue = (value: string, prepared: CustomPropsMap) => {
   let changed = true;
 
-  while (changed && value.includes('--')) {
+  while (changed && value.includes("--")) {
     changed = false; // Reset the changed flag for each iteration
-    const t = value.split('--')[1].replaceAll(')', '');
+    const t = value.split("--")[1].replaceAll(")", "");
     const newValue = prepared.get(`--${t}`);
     if (newValue !== undefined) {
       value = newValue;
@@ -33,7 +33,7 @@ const getColorValueFromTransformFn = (value: string) => {
     return match[1];
   }
   return value;
-}
+};
 
 function getCustomPropertiesFromRoot(root: Root) {
   root.walkDecls((decl) => {
@@ -45,12 +45,12 @@ function getCustomPropertiesFromRoot(root: Root) {
 }
 
 type ModuleOpt = {
-  pluginName?: string
+  pluginName?: string;
   /** The acceptanceLossPercentage parameter in the ModuleOpt type represents the acceptable loss
    * percentage for the color-to-filter transformation. This value is used to determine
    * the tolerance range for the transformation */
-  acceptanceLossPercentage?: number
-}
+  acceptanceLossPercentage?: number;
+};
 
 const plugin = (opts: ModuleOpt = {}) => {
   // Work with options here

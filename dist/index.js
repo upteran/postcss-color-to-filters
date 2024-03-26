@@ -48,15 +48,15 @@ function compute(input, acceptanceLossPercentage) {
     }
 }
 
-const TRANSFORM_FN_NAME = 'color-to-filter';
-const PLUGIN_NAME = 'postcss-color-to-filters';
+const TRANSFORM_FN_NAME = "color-to-filter";
+const PLUGIN_NAME = "postcss-color-to-filters";
 const customPropertyPtrn = /^--[A-z][\w-]*$/;
 const customPropsMap = new Map();
 const getCustomPropValue = (value, prepared) => {
     let changed = true;
-    while (changed && value.includes('--')) {
+    while (changed && value.includes("--")) {
         changed = false; // Reset the changed flag for each iteration
-        const t = value.split('--')[1].replaceAll(')', '');
+        const t = value.split("--")[1].replaceAll(")", "");
         const newValue = prepared.get(`--${t}`);
         if (newValue !== undefined) {
             value = newValue;
