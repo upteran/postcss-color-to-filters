@@ -3,8 +3,8 @@ import { equal, throws } from 'node:assert'
 import { test, describe } from 'node:test'
 
 import plugin from './src'
-import { compute } from './src/lib/compute';
 
+// todo: fix tests
 describe('plugin check', () => {
   async function run(input, output, opts = {}) {
     let result = await postcss([plugin(opts)]).process(input, { from: undefined })

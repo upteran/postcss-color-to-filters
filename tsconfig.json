@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2021",
+    "declaration": true,
+    "outDir": "dist",
     "moduleResolution": "node",
-    "lib": ["ES2021", "DOM"],
+    "lib": ["ES2021"],
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"]
     }
-  }
+  },
+  "exclude": ["**/*.test.ts", "**/*.test.js"]
 }

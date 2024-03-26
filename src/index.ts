@@ -52,7 +52,7 @@ type ModuleOpt = {
   acceptanceLossPercentage?: number
 }
 
-export default (opts: ModuleOpt = {}) => {
+const plugin = (opts: ModuleOpt = {}) => {
   // Work with options here
   const pluginName = opts.pluginName || PLUGIN_NAME;
   let prepared = null;
@@ -77,4 +77,6 @@ export default (opts: ModuleOpt = {}) => {
   };
 };
 
-export const postcss = true;
+plugin.postcss = true;
+
+export default plugin;
