@@ -1,6 +1,7 @@
 {
   "name": "postcss-color-to-filters",
   "version": "0.0.1",
+  "type": "module",
   "description": "PostCSS plugin to transform hex and rgb colors to css filters",
   "types": "dist/index.d.ts",
   "keywords": [
@@ -10,7 +11,15 @@
     "postcss-color-to-filters"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "default": "./dist/index.cjs"
+      }
+    }
   },
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",

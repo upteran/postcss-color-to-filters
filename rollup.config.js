@@ -2,10 +2,16 @@
 import typescript from '@rollup/plugin-typescript';
 export default {
   input: 'src/index.ts',
-  output: {
-    dir: 'dist',
-    format: 'cjs'
-  },
+  output: [
+    {
+      file: 'dist/index.cjs',
+      format: 'cjs',
+    },
+    {
+      file: 'dist/index.mjs',
+      format: 'es',
+    },
+  ],
   plugins: [typescript()],
   external: ["postcss"]
 };
