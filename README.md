@@ -71,19 +71,24 @@ body {
 
 ```
 
-This plugin uses the [hex-to-css-filter](https://github.com/willmendesneto/hex-to-css-filter) lib under the hood.
-
+## Options
 Within plugin usage can be change `acceptanceLossPercentage` option
 
 ```js
 module.exports = {
   plugins: [
     postcssColorToFilter({
+      // Acceptable color percentage to be lost during wide search.
       acceptanceLossPercentage: 5 // default 1
     })
   ]
 };
 ```
+
+## Credits
+
+This plugin utilizes the [hex-to-css-filter](https://github.com/willmendesneto/hex-to-css-filter) library for all transformations from color values to filters. Special thanks to this library for its contribution.
+
 
 ## License
 MIT
